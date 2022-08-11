@@ -51,6 +51,10 @@ function App() {
     });
   };
 
+  const insertPing=()=>
+  {
+    Axios.post("http://localhost:3001/insertPing")
+  }
   const insertData = () => {
     Axios.post("http://localhost:3001/create", {
       router: router,
@@ -162,6 +166,14 @@ function App() {
           onChange={(event)=>{
             setRAM(event.target.value);
           }}
+          
+        />
+        <label>Ping</label>
+        <input
+        type="number"
+        onChange={(event)=>{
+          setPing(event.target.value)
+        }}
         />
         <button onClick={insertData}>Inject data</button>
          <button onClick={getGrid}>Show data</button>  

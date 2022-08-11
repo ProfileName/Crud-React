@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const cors = require("cors");
+const {exec}=requier('child_process');
 
 app.use(cors());
 app.use(express.json());
@@ -58,6 +59,22 @@ app.post("/createD",(req,res)=>{
     }
   );
 });
+app.post("/insertPing",(req,res)=>{
+  const ping = req.body.ping;
+  const routerName = req.body.routerName;
+  db.query(
+    "INSERT into json_data(ping) VALUES(?)",
+     [ping, routerName],
+     (err, result) => 
+     {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send("Values Inserted");
+      }
+     }
+  );
+})
 app.post("/createDyna", (req, res) => {
   const routerName = req.body.routerName;
   const ping = req.body.ping;
