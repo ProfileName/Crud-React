@@ -1,7 +1,22 @@
 import "./App.css";
 import { useState, useEffect, useMemo } from "react";
 import Axios from "axios";
-import Table from "./table";
+import ReactTable from "react-table";
+import {Grid, GridCell, GridColumn}from '@progress/kendo-react-grid';
+import '@progress/kendo-theme-default/dist/all.css'
+import {process} from '@progress/kendo-data-query';
+import { DropDownList } from '@progress/kendo-react-dropdowns';
+import * as ReactDOM from "react-dom";
+import { groupBy } from "@progress/kendo-data-query";
+import lineCharts from "./compenents/Linechart"
+
+import {
+  Chart,
+  ChartSeries,
+  ChartSeriesItem,
+} from "@progress/kendo-react-charts";
+import "hammerjs";
+import Linecharts from "./compenents/Linechart";
 
 function App() {
   const [router, setRouter] = useState("");
@@ -12,48 +27,29 @@ function App() {
   const [Memory, setMemory] = useState(0);
   const [RAM, setRAM] = useState(0);
 
- const columns = useMemo(()=> [
-{
-  Header: 'Routers',
-  columns:[
-    {
-      Header: "router",
-      accessor: "show.router"
-    },
-    {
-      Header: "Type",
-      accessor: "show.type"
-    },
-    {
-      Header: "firmware",
-      accessor: "show.firmware"
-    },
-    {
-      Header: "Connectiontype",
-      accessor: "Connectiontype"
-    },
-    {
-      Header: "Cpuload",
-      accessor: "Cpuload"
-    },
-    {
-      Header: "Memory",
-      accessor: "show.Memory"
-    },
-    {
-      Header: "RAM",
-      accessor: "show.RAM"
-    }
+  const [ping, setPing] = useState(0); 
+  const [routerName,setRouterName] = useState("");
 
-  ]
-  
-}
 
- ],
-  []
- );
+
 
   const [gridList, setGridList] = useState([]);
+  const [DdataList, setDdataList] = useState([]);
+  const insertDdata = () =>
+  {
+    Axios.post("http://localhost:3001/createDyna",{
+      routerName: routerName,
+      ping: ping,
+    }).then(()=>{
+      setDdataList([
+        ...DdataList,
+        {
+          routerName: routerName,
+          ping: ping,
+        },
+      ]);
+    });
+  };
 
   const insertData = () => {
     Axios.post("http://localhost:3001/create", {
@@ -85,27 +81,11 @@ function App() {
       setGridList(response.data);
     });
   };
-
-  // const updateEmployeeWage = (id) => {
-  //   Axios.put("http://localhost:3001/update", { wage: newWage, id: id }).then(
-  //     (response) => {
-  //       setGridList(
-  //         gridList.map((val) => {
-  //           return val.id == id
-  //             ? {
-  //                 id: val.id,
-  //                 name: val.name,
-  //                 country: val.country,
-  //                 age: val.age,
-  //                 position: val.position,
-  //                 wage: newWage,
-  //               }
-  //             : val;
-  //         })
-  //       );
-  //     }
-  //   );
-  // };
+  const getDdata = () => {
+    Axios.get("http://localhost:3001/chart").then((response) => {
+      setGridList(response.data);
+    });
+  };
 
   const deleteGridele = (id) => {
     Axios.delete(`http://localhost:3001/delete/${id}`).then((response) => {
@@ -116,7 +96,21 @@ function App() {
       );
     });
   };
-
+  const series = groupBy(DdataList, [
+    {
+      field: "routerName"
+    },
+  ]);
+  
+  const mapSeries = (item) => (
+  <ChartSeriesItem
+  data={item.items}
+  name={item.value}
+  field="ping"
+  categoryField="interval"
+  type="line"
+  />
+  );
   return (
     <div className="App">
       <div className="information">
@@ -129,7 +123,7 @@ function App() {
         />
         <label>firmware:</label>
         <input
-          type="number"
+          type="text"
           onChange={(event) => {
             setFirware(event.target.value);
           }}
@@ -170,32 +164,25 @@ function App() {
           }}
         />
         <button onClick={insertData}>Inject data</button>
+         <button onClick={getGrid}>Show data</button>  
       </div>
-      <div className="employees">
-        <button onClick={getGrid}>Show data</button>
-
+      <div className="staticdata">
+      <Grid data={gridList}
+        //pageable={true}
+        //sortable={true}
+        style={{height: "400px", width: "100%"}}
+          >            
+        <GridColumn field="router" title="router" width="140px" locked={true} />
+        <GridColumn field="firmware" title="firmware" width="90px" locked={true}/>
+        <GridColumn field="type" title="type" width="90px" locked={true}/>
+        <GridColumn field="Connectiontype" title="Connectiontype" width="110px" locked={true}/>
+        <GridColumn field="Cpuload" title="Cpuload" width="90px" locked={true}/>
+        <GridColumn field="Memory"title="Memory" width="90px" locked={true}/>
+        <GridColumn field="RAM"title="RAM" width="90px" locked={true}/>            
+      </Grid>
         {gridList.map((val, key) => {
           return (
-            <div className="employee">
-              <div>
-                <h3>router: {val.router}</h3>
-                <h3>firmware: {val.firmware}</h3>
-                <h3>type: {val.type}</h3>
-                <h3>Connectiontype: {val.Connectiontype}</h3>
-                <h3>Cpuload: {val.Cpuload}</h3>
-                <h3>Memory: {val.Memory}</h3>
-                <h3>RAM: {val.RAM}</h3>
-              </div>
-              <div>
-                {/* <button
-                  onClick={() => {
-                    updateEmployeeWage(val.id);
-                  }}
-                >
-                  {" "}
-                  Update
-                </button> */}
-
+            <div className="staticdata">
                 <button
                   onClick={() => {
                     deleteGridele(val.id);
@@ -203,10 +190,21 @@ function App() {
                 >
                   Delete
                 </button>
-              </div>
-            </div>
+              </div>          
           );
         })}
+        
+      </div>
+      <div className="dynamicData">
+      <Chart> 
+        <ChartSeries>
+           <ChartSeriesItem type="scatterLine" data={DdataList}/>   
+          {series.map(mapSeries)}         
+        </ChartSeries>
+      </Chart> 
+      <lineCharts/>
+      <button onClick={insertDdata}>"inject data"</button>
+      <button onClick={getDdata}>Show ping</button>         
       </div>
     </div>
   );

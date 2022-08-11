@@ -32,14 +32,19 @@ input {
   cursor: pointer;
 }
 
-.employees {
+dt
+{
+  font-weight: bold;
+}
+
+.staticdata {
   display: flex;
   align-items: center;
   flex-direction: column;
   width: 100%;
 }
 
-.employee {
+.staticdata {
   width: 700px;
   height: auto;
   border: 1px solid black;
@@ -49,6 +54,11 @@ input {
   font-family: 'Courier New', Courier, monospace;
 }
 
-.employee h3 {
+.staticdata h3 {
   margin: 20px;
+}
+
+.Grid GridColumn
+{
+  border: 1px solid black;
 }

@@ -13,6 +13,14 @@ const db = mysql.createConnection({
   database: "staticdata",
 });
 
+const dbD = mysql.createConnection({
+  user: "newuser",
+  host: "localhost",
+  password: "newpassword",
+  database: "dynamicdata",
+});
+
+
 app.post("/create", (req, res) => {
   const router = req.body.router;
   const firmware = req.body.firmware;
@@ -34,15 +42,55 @@ app.post("/create", (req, res) => {
     }
   );
 });
+app.post("/createD",(req,res)=>{
+  const routerName = req.body.routerName;
+  const ping = req.body.ping;
 
+  db.query(
+    "INSERT INTO json_data(routerName, ping) VALUES (?,?)",
+    [routerName, ping],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send("Values Inserted");
+      }
+    }
+  );
+});
+app.post("/createDyna", (req, res) => {
+  const routerName = req.body.routerName;
+  const ping = req.body.ping;
+
+  db.query(
+    "INSERT INTO dynamicdata (routerName, ping) VALUES (?,?)",
+    [routerName, ping],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send("Values Inserted");
+      }
+    }
+  );
+});
 app.get("/grid", (req, res) => {
-  db.query("SELECT * FROM staticdata ", (err, result) => {
+  db.query("SELECT * FROM staticdata", (err, result) => {
     if (err) {
       console.log(err);
     } else {
       res.send(result);
     }
-  });
+  },);
+});
+app.get("/chart",(req, res)=>{
+  db.query("SELECT * FROM dynamicdata",(err,result)=>{
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  },);
 });
 
 // app.put("/update", (req, res) => {
@@ -64,6 +112,17 @@ app.get("/grid", (req, res) => {
 app.delete("/delete/:id", (req, res) => {
   const id = req.params.id;
   db.query("DELETE FROM staticdata WHERE id = ?", id, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  },);
+});
+
+app.delete("/deleteD/:id", (req, res) => {
+  const id = req.params.id;
+  db.query("DELETE FROM dynamicdata WHERE id = ?", id, (err, result) => {
     if (err) {
       console.log(err);
     } else {
