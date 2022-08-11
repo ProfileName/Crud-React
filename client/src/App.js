@@ -8,7 +8,7 @@ import {process} from '@progress/kendo-data-query';
 import { DropDownList } from '@progress/kendo-react-dropdowns';
 import * as ReactDOM from "react-dom";
 import { groupBy } from "@progress/kendo-data-query";
-import lineCharts from "./compenents/Linechart"
+
 
 import {
   Chart,
@@ -16,7 +16,7 @@ import {
   ChartSeriesItem,
 } from "@progress/kendo-react-charts";
 import "hammerjs";
-import Linecharts from "./compenents/Linechart";
+
 
 function App() {
   const [router, setRouter] = useState("");
@@ -27,6 +27,7 @@ function App() {
   const [Memory, setMemory] = useState(0);
   const [RAM, setRAM] = useState(0);
 
+  
   const [ping, setPing] = useState(0); 
   const [routerName,setRouterName] = useState("");
 
@@ -35,26 +36,24 @@ function App() {
 
   const [gridList, setGridList] = useState([]);
   const [DdataList, setDdataList] = useState([]);
-  const insertDdata = () =>
+  const [pingList, setPingList] = useState([]);
+
+  const insertPing=()=>
   {
-    Axios.post("http://localhost:3001/createDyna",{
+    Axios.post("http://localhost:3001//createD",{
       routerName: routerName,
       ping: ping,
     }).then(()=>{
-      setDdataList([
-        ...DdataList,
+      setPingList([
+        ...pingList,
         {
           routerName: routerName,
           ping: ping,
         },
       ]);
     });
-  };
-
-  const insertPing=()=>
-  {
-    Axios.post("http://localhost:3001/insertPing")
-  }
+    };
+  
   const insertData = () => {
     Axios.post("http://localhost:3001/create", {
       router: router,
@@ -211,12 +210,25 @@ function App() {
       <Chart> 
         <ChartSeries>
            <ChartSeriesItem type="scatterLine" data={DdataList}/>   
-          {series.map(mapSeries)}         
+            {series.map(mapSeries)}         
         </ChartSeries>
-      </Chart> 
-      <lineCharts/>
-      <button onClick={insertDdata}>"inject data"</button>
-      <button onClick={getDdata}>Show ping</button>         
+      </Chart>        
+      </div>
+      <div className="PingInput">
+        <label>router</label>
+          <input
+          type="router"
+          onChange={(event)=>{
+            setRouterName(event.target.value)
+          }}/>
+        <label>Ping</label>
+          <input
+          type="number"
+          onChange={(event)=>{
+          setPing(event.target.value)
+          }}/>
+          <button onClick={insertPing}>"inject data"</button>
+          <button onClick={getDdata}>Show ping</button>  
       </div>
     </div>
   );

@@ -23,10 +23,26 @@ export const executeCommand = (cmd, successCallback, errorCallback) => {
   });
 };
 
-export const getPing = (ip,pakketsize,totalpings,success,error) =>
+export const getPingWin = (ip,pakketsize,totalpings,success,error) =>
 {
     executeCommand(
         'ping -n ${totalpings} -l ${pakketsize} ${ip}',
+        branch => success(branch),
+        errormsg => error(errormsg)
+    );
+};
+export const getPingLin = (ip,pakketsize,totalpings,success,error) =>
+{
+    executeCommand(
+        'ping -c ${totalpings} -s ${pakketsize} ${ip}',
+        branch => success(branch),
+        errormsg => error(errormsg)
+    );
+};
+export const getPingMac = (ip,pakketsize,totalpings,success,error) =>
+{
+    executeCommand(
+        'ping -c ${totalpings} -s ${pakketsize} ${ip}',
         branch => success(branch),
         errormsg => error(errormsg)
     );
