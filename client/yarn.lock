@@ -1442,6 +1442,11 @@
   "resolved" "https://registry.npmjs.org/@popperjs/core/-/core-2.11.5.tgz"
   "version" "2.11.5"
 
+"@progress/kendo-charts@^1.24.0":
+  "integrity" "sha512-5INjhHWiJ1Lfr49AS4AMuobB3CPgCPuqpEDiOxxuZEWrJktA23KJE7xKaeGsoNHS0LsFM37A9yUedbIWnXAnNA=="
+  "resolved" "https://registry.npmjs.org/@progress/kendo-charts/-/kendo-charts-1.24.0.tgz"
+  "version" "1.24.0"
+
 "@progress/kendo-data-query@^1.0.0", "@progress/kendo-data-query@^1.6.0":
   "integrity" "sha512-oCPDk94cuhp+NskdjBlKH3/rW2fBmQo+tVYqe3CDcuoefc35d1whYgjo5OWV1ZxPCQ8R1u3PdLgoLYLhaze0lA=="
   "resolved" "https://registry.npmjs.org/@progress/kendo-data-query/-/kendo-data-query-1.6.0.tgz"
@@ -1463,7 +1468,7 @@
   dependencies:
     "tslib" "^1.7.0"
 
-"@progress/kendo-drawing@^1.16.3", "@progress/kendo-drawing@^1.2.0", "@progress/kendo-drawing@^1.5.12":
+"@progress/kendo-drawing@^1.0.0", "@progress/kendo-drawing@^1.16.3", "@progress/kendo-drawing@^1.2.0", "@progress/kendo-drawing@^1.5.12":
   "integrity" "sha512-zUh0EjffezxJy4osPVeHflbosdlMk971hYj3zJ8mAHiswUei5UTIn7aAxfHDXu3Fpw2d9WyRi/LkI0xKWNmDRA=="
   "resolved" "https://registry.npmjs.org/@progress/kendo-drawing/-/kendo-drawing-1.16.3.tgz"
   "version" "1.16.3"
@@ -1496,6 +1501,16 @@
   "resolved" "https://registry.npmjs.org/@progress/kendo-react-buttons/-/kendo-react-buttons-5.5.0.tgz"
   "version" "5.5.0"
   dependencies:
+    "@progress/kendo-react-common" "5.5.0"
+    "@progress/kendo-react-popup" "5.5.0"
+    "prop-types" "^15.6.0"
+
+"@progress/kendo-react-charts@^5.5.0":
+  "integrity" "sha512-AcjWkOBj1KkYS5mqcKbQUuO4YY7sw5UP/Nr+HUt+XoZy7P0c9oFKFGuVskAXTNbtC3gH5N5z339BDP+dEUwO2g=="
+  "resolved" "https://registry.npmjs.org/@progress/kendo-react-charts/-/kendo-react-charts-5.5.0.tgz"
+  "version" "5.5.0"
+  dependencies:
+    "@progress/kendo-charts" "^1.24.0"
     "@progress/kendo-react-common" "5.5.0"
     "@progress/kendo-react-popup" "5.5.0"
     "prop-types" "^15.6.0"
@@ -1589,6 +1604,11 @@
   dependencies:
     "@progress/kendo-react-common" "5.5.0"
     "prop-types" "^15.6.0"
+
+"@progress/kendo-theme-default@^5.6.0":
+  "integrity" "sha512-FjnYHxNA1DZ94CEFChCDaNIOxX5/DOo0T17WI0Mhsgd34nA0RLzWgbz0bkvHUjtYk4J5uQWMu5ex66ytwctvJg=="
+  "resolved" "https://registry.npmjs.org/@progress/kendo-theme-default/-/kendo-theme-default-5.6.0.tgz"
+  "version" "5.6.0"
 
 "@progress/pako-esm@^1.0.1":
   "integrity" "sha512-O4A3b1EuE9Xe1pC3Xz9Tcn1M/CYrL71f4y/5TXeytOVTkmkzBgYW97fYP2f+54H0e0erWRaqV/kUUB/a8Uxfbw=="
@@ -5712,6 +5732,11 @@
   dependencies:
     "duplexer" "^0.1.1"
     "pify" "^4.0.1"
+
+"hammerjs@^2.0.0":
+  "integrity" "sha512-tSQXBXS/MWQOn/RKckawJ61vvsDpCom87JgxiYdGwHdOa0ht0vzUWDlfioofFCRU0L+6NGDt6XzbgoJvZkMeRQ=="
+  "resolved" "https://registry.npmjs.org/hammerjs/-/hammerjs-2.0.8.tgz"
+  "version" "2.0.8"
 
 "handle-thing@^2.0.0":
   "integrity" "sha512-9Qn4yBxelxoh2Ow62nP+Ka/kMnOXRi8BXnRaUwezLNhqelnN49xKz4F/dPP8OYLxLxq6JDtZb2i9XznUQbNPTg=="
