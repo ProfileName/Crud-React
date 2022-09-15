@@ -23,6 +23,14 @@ export const executeCommand = (cmd, successCallback, errorCallback) => {
   });
 };
 
+export const sshInto = (ip,pass) =>
+{
+  executeCommand('ssh root@ $ip',
+    branch => success(branch),
+    errormsg => error(errormsg)
+   )
+} 
+
 export const getPingWin = (ip,pakketsize,totalpings,success,error) =>
 {
     executeCommand(
@@ -31,7 +39,7 @@ export const getPingWin = (ip,pakketsize,totalpings,success,error) =>
         errormsg => error(errormsg)
     );
 };
-export const getPingLin = (ip,pakketsize,totalpings,success,error) =>
+export const getPingLinux = (ip,pakketsize,totalpings,success,error) =>
 {
     executeCommand(
         'ping -c ${totalpings} -s ${pakketsize} ${ip}',
@@ -47,3 +55,12 @@ export const getPingMac = (ip,pakketsize,totalpings,success,error) =>
         errormsg => error(errormsg)
     );
 };
+export const downLoadLinux = (ip,image,success,error) => 
+{
+  executeCommand
+  (
+    'wget',
+    branch => success(branch),
+    errormsg => error(errormsg)
+  );
+}

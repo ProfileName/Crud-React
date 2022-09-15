@@ -25,11 +25,13 @@
     "@testing-library/user-event": "^12.1.10",
     "ag-grid-react": "^28.0.0",
     "axios": "^0.21.0",
+    "highcharts": "^10.2.1",
     "mysql2": "^2.3.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.0",
     "react-table": "^7.8.0",
+    "recharts": "^2.1.14",
     "web-vitals": "^0.2.4"
   },
   "scripts": {

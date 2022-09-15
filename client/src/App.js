@@ -1,21 +1,20 @@
 import "./App.css";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Axios from "axios";
 import ReactTable from "react-table";
 import {Grid, GridCell, GridColumn}from '@progress/kendo-react-grid';
-import '@progress/kendo-theme-default/dist/all.css'
+import '@progress/kendo-theme-default/dist/all.css';
+import {LineChart,ResponsiveContainer,Legend,Tooltip,Line,XAxis,YAxis,CartesianGrid} from 'recharts';
 import {process} from '@progress/kendo-data-query';
 import { DropDownList } from '@progress/kendo-react-dropdowns';
 import * as ReactDOM from "react-dom";
-import { groupBy } from "@progress/kendo-data-query";
+//import { groupBy } from "@progress/kendo-data-query";
+import Highcharts from 'highcharts';
+import 'hammerjs';
+//import {Line} from 'react-chartjs-2';
+import { Chart, ChartSeries, ChartSeriesItem, ChartCategoryAxis, ChartCategoryAxisItem, ChartTitle, ChartLegend } from "@progress/kendo-react-charts";
 
 
-import {
-  Chart,
-  ChartSeries,
-  ChartSeriesItem,
-} from "@progress/kendo-react-charts";
-import "hammerjs";
 
 
 function App() {
@@ -27,33 +26,109 @@ function App() {
   const [Memory, setMemory] = useState(0);
   const [RAM, setRAM] = useState(0);
 
-  
-  const [ping, setPing] = useState(0); 
+
+  const [pingS, setPingS] = useState("");
+  const [pingG, setpingG] = useState("");
+  const refContainer = useRef(null);
+  const [ping, setPing] = useState([]); 
   const [routerName,setRouterName] = useState("");
-
-
-
+  const [jsonArray, setJsonArray] = useState("");
 
   const [gridList, setGridList] = useState([]);
   const [DdataList, setDdataList] = useState([]);
   const [pingList, setPingList] = useState([]);
 
+useEffect(() => {
+  const chart = Highcharts.chart(refContainer.current, {
+    chart: {
+      type: 'line'
+    },
+    title: {
+      text: 'Ping'
+    },
+    yAxis: {
+      title: {
+        text : 'ms'
+      },
+    },
+    xAxis: {
+      min: 0.4,
+      categories: ['','','','','','','','',],
+      title: {
+        text: 'time'
+      }
+    },
+    tooltip: {
+      headerFormat: '<span style="font-size:13px;font-weight:bold;">{point.key}</span><table>',
+      pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+          '<td style="padding:0"><b>{point.y}</b></td></tr>',
+      footerFormat: '</table>',
+      shared: true,
+      useHTML: true
+    },
+    credits: {
+      enabled: false
+    },
+    series: pingList
+  });
+  if (pingList !== null)
+  {
+    chart.hideLoading();
+  }
+  else{
+    chart.showLoading();
+  }
+}, [pingList]);
+useEffect(() => {
+  setTimeout(() =>{
+    setPingList();
+  }, 300);
+},[]);
+  const pingIng=()=>{
+
+  };
+let json = 
+[
+  13,35,12,35
+]
+ const insertTest=() => 
+ {
+  Axios.post("http://localhost:3001/insertPing",{
+      routerName: "10.195.0.1",
+      ping: JSON.stringify(json)       
+    })
+ };
   const insertPing=()=>
   {
-    Axios.post("http://localhost:3001//createD",{
+    Axios.post("http://localhost:3001/insertPing",{
       routerName: routerName,
       ping: ping,
+      
     }).then(()=>{
       setPingList([
         ...pingList,
         {
           routerName: routerName,
-          ping: ping,
+          ping: ping,          
         },
       ]);
     });
     };
-  
+  /* const series = groupBy(pingList, [
+    {
+      field: 'routerName',
+    },
+  ]); */
+  /* const mapSeries =(item) => 
+  (
+    <ChartSeriesItem
+    data ={item.routerName}
+    name ={item.ping}
+    field="ping"
+    categoryField="tijd"
+    type="line"
+    />
+  ); */
   const insertData = () => {
     Axios.post("http://localhost:3001/create", {
       router: router,
@@ -78,10 +153,14 @@ function App() {
       ]);
     });
   };
-
   const getGrid = () => {
     Axios.get("http://localhost:3001/grid").then((response) => {
-      setGridList(response.data);
+      setGridList(response.data);     
+    });
+  };
+  const getPing = () => {
+    Axios.get("http://localhost:3001/pings").then((response) => {
+      setPingList(response.data);     
     });
   };
   const getDdata = () => {
@@ -89,31 +168,49 @@ function App() {
       setGridList(response.data);
     });
   };
-
-  const deleteGridele = (id) => {
+const getms = (text) => 
+{
+  let texts = text.substring(text.indexOf("time=")+1, text.lastIndexOf("ms"));
+  setpingG(texts)
+  // setpingG(text.substring(text.index("time=")+1,
+  // text.lastindexOf("ms")));
+};
+const getmsL = (text) =>
+{
+  text.substring(text.index("time=")+1,
+  text.lastIndexOf(" ms"));
+};
+ const PingingW = () =>{
+  Axios.get("http://localhost:3001?/pingingwing").then((response) => {
+    setPingS(response.data);
+  });
+}; 
+const PingingL = () =>{
+  Axios.get("http://localhost:3001?/pingingLin").then((response) => {
+    setPingS(response.data);
+  });
+};
+ const PingintojArray = () =>
+{
+  var thearray = [];
+  for(var x=0;x<10;x++)
+  {
+    PingingW();
+    getms(pingS);
+    thearray.push(pingG);
+  }
+  setJsonArray(JSON.stringify(thearray));
+    Axios.post('http://localhost:3001/Pingin');
+} 
+const deleteGridele = (id) => {
     Axios.delete(`http://localhost:3001/delete/${id}`).then((response) => {
       setGridList(
         gridList.filter((val) => {
-          return val.id != id;
+          return val.id !== id;
         })
       );
     });
-  };
-  const series = groupBy(DdataList, [
-    {
-      field: "routerName"
-    },
-  ]);
-  
-  const mapSeries = (item) => (
-  <ChartSeriesItem
-  data={item.items}
-  name={item.value}
-  field="ping"
-  categoryField="interval"
-  type="line"
-  />
-  );
+ }; 
   return (
     <div className="App">
       <div className="information">
@@ -164,23 +261,22 @@ function App() {
           type="number"
           onChange={(event)=>{
             setRAM(event.target.value);
-          }}
-          
+          }}         
         />
+        <label>routerName</label>
+        <input type="text"
+        onChange={(event)=>{setRouterName(event.target.value)}}/>
         <label>Ping</label>
-        <input
-        type="number"
-        onChange={(event)=>{
-          setPing(event.target.value)
-        }}
-        />
+        <input type="text"
+        onChange={(event)=>{setPing(event.target.value)}}/>
+
         <button onClick={insertData}>Inject data</button>
-         <button onClick={getGrid}>Show data</button>  
+        <button onClick={insertTest}>Inject the Ping</button>
+        <button onClick={getGrid}>Show data</button>  
+        <button onClick={PingintojArray}>sendping</button> 
       </div>
       <div className="staticdata">
       <Grid data={gridList}
-        //pageable={true}
-        //sortable={true}
         style={{height: "400px", width: "100%"}}
           >            
         <GridColumn field="router" title="router" width="140px" locked={true} />
@@ -203,35 +299,36 @@ function App() {
                 </button>
               </div>          
           );
-        })}
-        
+        })}       
       </div>
-      <div className="dynamicData">
-      <Chart> 
+      <button onClick={getPing}>Show ping</button> 
+        {/* <div className="json_data">
+        <ChartTitle text="Ping"/>
         <ChartSeries>
-           <ChartSeriesItem type="scatterLine" data={DdataList}/>   
-            {series.map(mapSeries)}         
-        </ChartSeries>
-      </Chart>        
-      </div>
-      <div className="PingInput">
-        <label>router</label>
-          <input
-          type="router"
-          onChange={(event)=>{
-            setRouterName(event.target.value)
-          }}/>
-        <label>Ping</label>
-          <input
-          type="number"
-          onChange={(event)=>{
-          setPing(event.target.value)
-          }}/>
-          <button onClick={insertPing}>"inject data"</button>
-          <button onClick={getDdata}>Show ping</button>  
-      </div>
+          {pingList.map((item, idx) => (
+            <ChartSeriesItem
+            key={idx}
+            type="line"
+            tooltip={{
+              visible: true,
+            }}
+            data={item.ping}
+            name={item.routerName}
+            />
+          ))}
+        </ChartSeries> 
+        </div>  */}
+     {/* <div className="ping">
+        <Chart>
+          <ChartSeries>
+            {series.map(mapSeries)}
+          </ChartSeries>
+        </Chart>
+      </div>  */}  
+      <div className = "pingchart">
+        <div ref={refContainer}/>
+      </div>          
     </div>
   );
 }
-
 export default App;
