@@ -1,3 +1,4 @@
+// @ts-check
 import "./App.css";
 import { useState, useEffect, useMemo, useRef } from "react";
 import Axios from "axios";
@@ -13,6 +14,8 @@ import Highcharts from 'highcharts';
 import 'hammerjs';
 //import {Line} from 'react-chartjs-2';
 import { Chart, ChartSeries, ChartSeriesItem, ChartCategoryAxis, ChartCategoryAxisItem, ChartTitle, ChartLegend } from "@progress/kendo-react-charts";
+import { stderr, stdout } from "process";
+const {exec} = require('child_process');
 
 
 
@@ -87,18 +90,19 @@ useEffect(() => {
   const pingIng=()=>{
 
   };
-let json = 
-[
-  13,35,12,35
-]
- const insertTest=() => 
+function removeParts(item,index,arr)
+{
+  arr[index]= item.substring(5, item.indexOf("ms"))
+};
+
+ const insertTest=(json) => 
  {
   Axios.post("http://localhost:3001/insertPing",{
       routerName: "10.195.0.1",
       ping: JSON.stringify(json)       
     })
  };
-  const insertPing=()=>
+const insertPing=()=>
   {
     Axios.post("http://localhost:3001/insertPing",{
       routerName: routerName,
@@ -113,7 +117,7 @@ let json =
         },
       ]);
     });
-    };
+  };
   /* const series = groupBy(pingList, [
     {
       field: 'routerName',
@@ -163,10 +167,70 @@ let json =
       setPingList(response.data);     
     });
   };
-  const getDdata = () => {
-    Axios.get("http://localhost:3001/chart").then((response) => {
-      setGridList(response.data);
+  const slicing = (stringin) => 
+  {
+      let sepatext = stringin.split(' ');
+      sepatext.sort();
+      sepatext.slice("time=","ms");
+      let findstats = sepatext.indexOf("statistics");
+      let slicedtext = sepatext.slice(findstats+1);
+      for(let x= 0; x < 3 ; x++)
+      {
+        slicedtext.pop();
+      }
+      slicedtext.forEach(removeParts);
+      Axios.post("http://localhost:3001/insertPing",{
+        routerName: "10.195.0.1",
+        ping: JSON.stringify(slicedtext)       
+      });
+  }
+  const getPing2 = () => {
+    let slicedtext = [];
+    exec('ping -n 100 -l 64000 10.195.0.1', (err,stdout,stderr) =>{
+      if(err){
+        console.error(stderr);
+        return;
+      }
+      let sepatext = stdout.split(' ');
+      sepatext.sort();
+      sepatext.slice("time=","ms");
+      let findstats = sepatext.indexOf("statistics");
+      let slicedtext = sepatext.slice(findstats+1);
+      for(let x= 0; x < 3 ; x++)
+      {
+        slicedtext.pop();
+      }
+      slicedtext.forEach(removeParts);
     });
+    Axios.post("http://localhost:3001/insertPing",{
+      routerName: "10.195.0.1",
+      ping: JSON.stringify(slicedtext)       
+    });
+  
+  };
+  const getPing3 = () => 
+  {
+    let text = [''];
+    text = Axios.get("http://localhost:3001//pingingwing");
+    if(text != null){
+    console.log({text});
+    text.sort();
+    text.slice("time=","ms");
+    let findstats = text.indexOf("statistics");
+    let slicedtext = text.slice(findstats+1);
+    for(let x= 0; x < 3 ; x++)
+    {
+      slicedtext.pop();
+    }
+    slicedtext.forEach(removeParts);
+    Axios.post("http://localhost:3001/insertPing",{
+      routerName: "10.195.0.1",
+      ping: JSON.stringify(slicedtext)       
+    });
+    } else 
+    {
+      console.log("nothing to see")
+    }
   };
 const getms = (text) => 
 {
@@ -175,21 +239,11 @@ const getms = (text) =>
   // setpingG(text.substring(text.index("time=")+1,
   // text.lastindexOf("ms")));
 };
-const getmsL = (text) =>
-{
-  text.substring(text.index("time=")+1,
-  text.lastIndexOf(" ms"));
-};
  const PingingW = () =>{
   Axios.get("http://localhost:3001?/pingingwing").then((response) => {
     setPingS(response.data);
   });
 }; 
-const PingingL = () =>{
-  Axios.get("http://localhost:3001?/pingingLin").then((response) => {
-    setPingS(response.data);
-  });
-};
  const PingintojArray = () =>
 {
   var thearray = [];
@@ -269,7 +323,6 @@ const deleteGridele = (id) => {
         <label>Ping</label>
         <input type="text"
         onChange={(event)=>{setPing(event.target.value)}}/>
-
         <button onClick={insertData}>Inject data</button>
         <button onClick={insertTest}>Inject the Ping</button>
         <button onClick={getGrid}>Show data</button>  
@@ -301,7 +354,8 @@ const deleteGridele = (id) => {
           );
         })}       
       </div>
-      <button onClick={getPing}>Show ping</button> 
+      <button onClick={getPing3}>Show ping
+        </button> 
         {/* <div className="json_data">
         <ChartTitle text="Ping"/>
         <ChartSeries>
@@ -332,3 +386,4 @@ const deleteGridele = (id) => {
   );
 }
 export default App;
+

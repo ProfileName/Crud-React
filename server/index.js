@@ -4,11 +4,12 @@ const app = express();
 const mysql = require("mysql");
 const cors = require("cors");
 const { exec } = require('child_process');
+const { stdout, stderr } = require("process");
 
 app.use(cors());
 app.use(express.json());
 
-const executeCommand = (cmd, successCallback, errorCallback) => {
+async function executeCommand (cmd, successCallback, errorCallback)  {
   exec(cmd, (error, stdout, stderr) => {
     if (error) {
      // console.log(`error: ${error.message}`);
@@ -215,6 +216,19 @@ app.get("/pingingwing", (req, res) =>{
     res.send(branch);    
   }
 });
+app.get("/pinging",(req,res) =>{
+  exec('ping -n 10 -l 1472 10.195.0.1',(err,stdout,stderr)=>{
+    if(err)
+    {
+      console.error(stderr);
+      return;
+    }
+    res.send(stdout);
+  })
+});
+app.get("/testping",(req,res)=>{
+    
+})
 app.listen(3001, () => {
   console.log("Yey, your server is running on port 3001");
 });
