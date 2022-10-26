@@ -94,7 +94,6 @@ function removeParts(item,index,arr)
 {
   arr[index]= item.substring(5, item.indexOf("ms"))
 };
-
  const insertTest=(json) => 
  {
   Axios.post("http://localhost:3001/insertPing",{
@@ -214,10 +213,11 @@ const insertPing=()=>
     text = Axios.get("http://localhost:3001//pingingwing");
     if(text != null){
     console.log({text});
-    text.sort();
-    text.slice("time=","ms");
-    let findstats = text.indexOf("statistics");
-    let slicedtext = text.slice(findstats+1);
+    let jtext = JSON.parse(text)
+    jtext.sort();
+    jtext.slice("time=","ms");
+    let findstats = jtext.indexOf("statistics");
+    let slicedtext = jtext.slice(findstats+1);
     for(let x= 0; x < 3 ; x++)
     {
       slicedtext.pop();

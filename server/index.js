@@ -10,6 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 async function executeCommand (cmd, successCallback, errorCallback)  {
+  try{
   exec(cmd, (error, stdout, stderr) => {
     if (error) {
      // console.log(`error: ${error.message}`);
@@ -30,6 +31,10 @@ async function executeCommand (cmd, successCallback, errorCallback)  {
       successCallback(stdout);
     }
   });
+}catch(err)
+{
+  alert(err);
+}
 };
 const db = mysql.createConnection({
   user: "newuser",
